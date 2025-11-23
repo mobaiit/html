@@ -33,7 +33,7 @@
       min-height: 100vh;
       padding: 24px;
       display: flex;
-      align-items: center;
+      align-items: flex-start; /* 顶部对齐，避免整体被挤出屏幕 */
       justify-content: center;
     }
 
@@ -53,7 +53,8 @@
       gap: 20px;
       position: relative;
       max-height: calc(100vh - 48px);
-      overflow: hidden;
+      overflow-x: hidden;
+      overflow-y: auto; /* 内部滚动，避免内容被裁掉 */
     }
 
     .floating-animal {
@@ -228,6 +229,42 @@
       color: rgba(190, 205, 245, 0.95);
       margin-bottom: 6px;
       opacity: 0.9;
+    }
+
+    /* 搜索来源筛选 */
+    .source-filter {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+      margin-bottom: 4px;
+      font-size: 11px;
+      color: rgba(200, 214, 255, 0.95);
+    }
+
+    .source-filter-label {
+      opacity: 0.9;
+    }
+
+    .source-filter-option {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(7, 12, 30, 0.9);
+      border: 1px solid rgba(174, 207, 255, 0.45);
+      cursor: pointer;
+    }
+
+    .source-filter-option input {
+      cursor: pointer;
+      accent-color: #fdcb6e;
+    }
+
+    .source-filter-option span {
+      white-space: nowrap;
     }
 
     .results {
@@ -666,6 +703,9 @@
       .card {
         grid-template-columns: 1fr;
         padding: 16px;
+        max-height: none;      /* 小屏下交给页面整体滚动 */
+        height: auto;
+        overflow-y: visible;
       }
       .results { max-height: 200px; }
       .now-playing-card { max-height: none; }
@@ -719,6 +759,19 @@
           </button>
         </form>
 
+        <!-- 搜索来源筛选 -->
+        <div class="source-filter">
+          <span id="sourceFilterLabel" class="source-filter-label">搜索来源：</span>
+          <label class="source-filter-option">
+            <input type="checkbox" id="sourceMiguCheckbox" checked />
+            <span id="sourceFilterMiguText">咪咕音乐</span>
+          </label>
+          <label class="source-filter-option">
+            <input type="checkbox" id="sourceNeteaseCheckbox" checked />
+            <span id="sourceFilterNeteaseText">网易云音乐</span>
+          </label>
+        </div>
+
         <div id="sourceSummary" class="source-summary-line">
           当前来源：咪咕音乐 + 网易云音乐
         </div>
@@ -761,7 +814,7 @@
                 <button id="toggleLyricsBtn" type="button" class="link-btn">
                   🎼 显示/隐藏歌词
                 </button>
-                <!-- 新增：播放模式按钮 -->
+                <!-- 播放模式按钮 -->
                 <button id="playModeBtn" type="button" class="link-btn">
                   🔁 顺序
                 </button>
@@ -987,7 +1040,7 @@
     requestAnimationFrame(animate);
   })();
 
-  // 音乐逻辑：咪咕 + 网易云 双源
+  // 音乐逻辑：咪咕 + 网易云 双源 + 搜索来源筛选
   (function () {
     const API_MIGU = "https://api.cenguigui.cn/api/mg_music/";
     const API_NETEASE_SEARCH = "https://api.cenguigui.cn/api/music/netease/WyY_Dg.php";
@@ -1000,6 +1053,12 @@
     const resultsEl = document.getElementById("results");
     const searchBtn = document.getElementById("searchBtn");
     const sourceSummaryEl = document.getElementById("sourceSummary");
+
+    const sourceMiguCheckbox = document.getElementById("sourceMiguCheckbox");
+    const sourceNeteaseCheckbox = document.getElementById("sourceNeteaseCheckbox");
+    const sourceFilterLabelEl = document.getElementById("sourceFilterLabel");
+    const sourceFilterMiguTextEl = document.getElementById("sourceFilterMiguText");
+    const sourceFilterNeteaseTextEl = document.getElementById("sourceFilterNeteaseText");
 
     const audioEl = document.getElementById("audioEl");
     const coverImg = document.getElementById("coverImg");
@@ -1081,6 +1140,9 @@
         sourceLabelMigu: "咪咕音乐",
         sourceLabelNetease: "网易云音乐",
         sourceLabelBoth: (a, b) => `${a} + ${b}`,
+        sourceFilterLabel: "搜索来源：",
+        sourceFilterMigu: "咪咕音乐",
+        sourceFilterNetease: "网易云音乐",
         sourceSummaryNone: "当前来源：暂无",
         sourceSummaryMigu: (a) => `当前来源：${a}`,
         sourceSummaryNetease: (b) => `当前来源：${b}`,
@@ -1137,6 +1199,9 @@
         sourceLabelMigu: "MiGu Music",
         sourceLabelNetease: "NetEase Cloud",
         sourceLabelBoth: (a, b) => `${a} + ${b}`,
+        sourceFilterLabel: "Sources:",
+        sourceFilterMigu: "MiGu",
+        sourceFilterNetease: "NetEase",
         sourceSummaryNone: "Sources: none",
         sourceSummaryMigu: (a) => `Sources: ${a}`,
         sourceSummaryNetease: (b) => `Sources: ${b}`,
@@ -1160,8 +1225,6 @@
 
     let currentSongData = null;
     let currentSourceType = null;
-
-    let lastSearchSources = { hasMigu: true, hasNetease: true };
 
     let vizAnimationId = null;
     if (vizCanvas && vizCtx) {
@@ -1274,8 +1337,10 @@
       lyricsLinkWrap.appendChild(link);
     }
 
-    function updateSourceSummary(hasMigu, hasNetease) {
+    function updateSourceSummary() {
       const t = langStaticTexts[currentLang];
+      const hasMigu = sourceMiguCheckbox ? sourceMiguCheckbox.checked : true;
+      const hasNetease = sourceNeteaseCheckbox ? sourceNeteaseCheckbox.checked : true;
       let text;
       if (hasMigu && hasNetease) {
         text = t.sourceSummaryBoth(t.sourceLabelMigu, t.sourceLabelNetease);
@@ -1315,6 +1380,10 @@
       openOriginBtn.textContent = t.openOriginBtn;
       langToggleBtn.textContent = currentLang === "zh" ? "中 / EN" : "EN / 中";
 
+      if (sourceFilterLabelEl) sourceFilterLabelEl.textContent = t.sourceFilterLabel;
+      if (sourceFilterMiguTextEl) sourceFilterMiguTextEl.textContent = t.sourceFilterMigu;
+      if (sourceFilterNeteaseTextEl) sourceFilterNeteaseTextEl.textContent = t.sourceFilterNetease;
+
       if (!currentSongData) {
         songTitleEl.textContent = t.nowPlayingIdleTitle;
         songSingerEl.textContent = t.nowPlayingIdleSinger;
@@ -1339,7 +1408,7 @@
 
       shortcutsHintEl.innerHTML = t.shortcutsHint.replace(/\n/g, "<br/>");
 
-      updateSourceSummary(lastSearchSources.hasMigu, lastSearchSources.hasNetease);
+      updateSourceSummary();
       updatePlayModeLabel();
 
       if (!lrcEntries.length) {
@@ -1365,6 +1434,20 @@
       }
     }
 
+    function ensureAtLeastOneSource(changed) {
+      if (!sourceMiguCheckbox || !sourceNeteaseCheckbox) return;
+      const useMigu = sourceMiguCheckbox.checked;
+      const useNetease = sourceNeteaseCheckbox.checked;
+      if (!useMigu && !useNetease) {
+        if (changed === "migu") {
+          sourceNeteaseCheckbox.checked = true;
+        } else {
+          sourceMiguCheckbox.checked = true;
+        }
+      }
+      updateSourceSummary();
+    }
+
     langToggleBtn.addEventListener("click", () => {
       currentLang = currentLang === "zh" ? "en" : "zh";
       applyLanguage();
@@ -1383,6 +1466,17 @@
       });
     }
 
+    if (sourceMiguCheckbox) {
+      sourceMiguCheckbox.addEventListener("change", () =>
+        ensureAtLeastOneSource("migu")
+      );
+    }
+    if (sourceNeteaseCheckbox) {
+      sourceNeteaseCheckbox.addEventListener("change", () =>
+        ensureAtLeastOneSource("netease")
+      );
+    }
+
     searchForm.addEventListener("submit", function (e) {
       e.preventDefault();
       const q = searchInput.value.trim();
@@ -1398,6 +1492,17 @@
     async function searchSongs(query) {
       const t = langStaticTexts[currentLang];
       try {
+        let useMigu = !sourceMiguCheckbox || sourceMiguCheckbox.checked;
+        let useNetease = !sourceNeteaseCheckbox || sourceNeteaseCheckbox.checked;
+
+        // 防止两个都被取消，强制恢复为两个都选
+        if (!useMigu && !useNetease) {
+          useMigu = true;
+          useNetease = true;
+          if (sourceMiguCheckbox) sourceMiguCheckbox.checked = true;
+          if (sourceNeteaseCheckbox) sourceNeteaseCheckbox.checked = true;
+        }
+
         const miguUrl =
           API_MIGU +
           "?msg=" +
@@ -1412,17 +1517,22 @@
           NETEASE_LIMIT +
           "&n=";
 
-        const [miguResp, neteaseResp] = await Promise.all([
-          fetch(miguUrl),
-          fetch(neteaseUrl)
-        ]);
+        const miguPromise = useMigu
+          ? fetch(miguUrl).then((r) => r.text()).catch(() => null)
+          : Promise.resolve(null);
+        const neteasePromise = useNetease
+          ? fetch(neteaseUrl).then((r) => r.json()).catch(() => null)
+          : Promise.resolve(null);
 
         const [miguText, neteaseJson] = await Promise.all([
-          miguResp.text(),
-          neteaseResp.json()
+          miguPromise,
+          neteasePromise
         ]);
 
-        const miguListRaw = parseSearchResultText(miguText);
+        let miguListRaw = [];
+        if (miguText) {
+          miguListRaw = parseSearchResultText(miguText);
+        }
 
         let neteaseListRaw = [];
         if (neteaseJson && neteaseJson.code === 200 && Array.isArray(neteaseJson.data)) {
@@ -1434,36 +1544,35 @@
           }));
         }
 
-        lastSearchSources = {
-          hasMigu: miguListRaw.length > 0,
-          hasNetease: neteaseListRaw.length > 0
-        };
-        updateSourceSummary(lastSearchSources.hasMigu, lastSearchSources.hasNetease);
-
         const merged = [];
         let globalIndex = 1;
 
-        miguListRaw.forEach((it) => {
-          merged.push({
-            globalIndex: globalIndex++,
-            title: it.title,
-            singer: it.singer,
-            source: "migu",
-            apiIndex: it.index
+        if (useMigu) {
+          miguListRaw.forEach((it) => {
+            merged.push({
+              globalIndex: globalIndex++,
+              title: it.title,
+              singer: it.singer,
+              source: "migu",
+              apiIndex: it.index
+            });
           });
-        });
+        }
 
-        neteaseListRaw.forEach((it) => {
-          merged.push({
-            globalIndex: globalIndex++,
-            title: it.title,
-            singer: it.singer,
-            source: "netease",
-            apiIndex: it.index,
-            songid: it.songid
+        if (useNetease) {
+          neteaseListRaw.forEach((it) => {
+            merged.push({
+              globalIndex: globalIndex++,
+              title: it.title,
+              singer: it.singer,
+              source: "netease",
+              apiIndex: it.index,
+              songid: it.songid
+            });
           });
-        });
+        }
 
+        updateSourceSummary();
         renderResultList(merged, query);
 
         if (!merged.length) {
@@ -2022,7 +2131,7 @@
     renderInitialResultsHint();
     showLyricsPlaceholder(langStaticTexts[currentLang].lyricsInitialPlaceholder);
     setStatus(langStaticTexts[currentLang].statusInit, "init");
-    updateSourceSummary(lastSearchSources.hasMigu, lastSearchSources.hasNetease);
+    updateSourceSummary();
     applyLanguage();
   })();
   </script>
