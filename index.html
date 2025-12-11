@@ -361,15 +361,6 @@
     .source-chip-netease .source-chip-dot {
       background: linear-gradient(135deg, #ff7675, #d63031);
     }
-    .source-chip-spotify .source-chip-dot {
-      background: linear-gradient(135deg, #1db954, #1ed760);
-    }
-    .source-chip-apple .source-chip-dot {
-      background: linear-gradient(135deg, #fa233b, #fb5c74);
-    }
-    .source-chip-tidal .source-chip-dot {
-      background: linear-gradient(135deg, #00ffff, #0088ff);
-    }
     .source-chip-qobuz .source-chip-dot {
       background: linear-gradient(135deg, #00a1e4, #005f8f);
     }
@@ -506,15 +497,6 @@
     }
     .source-mixed {
       background: linear-gradient(135deg, #fdcb6e, #ff7675);
-    }
-    .source-spotify {
-      background: linear-gradient(135deg, #1db954, #1ed760);
-    }
-    .source-apple {
-      background: linear-gradient(135deg, #fa233b, #fb5c74);
-    }
-    .source-tidal {
-      background: linear-gradient(135deg, #00ffff, #0088ff);
     }
     .source-qobuz {
       background: linear-gradient(135deg, #00a1e4, #005f8f);
@@ -847,20 +829,6 @@
             <input type="checkbox" id="sourceNeteaseCheckbox" checked />
             <span id="sourceFilterNeteaseText">网易云音乐</span>
           </label>
-
-          <!-- 新增四个源 -->
-          <label class="source-filter-option">
-            <input type="checkbox" id="sourceSpotifyCheckbox" checked />
-            <span id="sourceFilterSpotifyText">Spotify</span>
-          </label>
-          <label class="source-filter-option">
-            <input type="checkbox" id="sourceAppleCheckbox" checked />
-            <span id="sourceFilterAppleText">Apple Music</span>
-          </label>
-          <label class="source-filter-option">
-            <input type="checkbox" id="sourceTidalCheckbox" checked />
-            <span id="sourceFilterTidalText">Tidal</span>
-          </label>
           <label class="source-filter-option">
             <input type="checkbox" id="sourceQobuzCheckbox" checked />
             <span id="sourceFilterQobuzText">Qobuz</span>
@@ -868,7 +836,7 @@
         </div>
 
         <div id="sourceSummary" class="source-summary-line">
-          当前来源：咪咕音乐 + 网易云音乐 + Spotify + Apple Music + Tidal + Qobuz
+          当前来源：咪咕音乐 + 网易云音乐 + Qobuz
         </div>
 
         <div id="results" class="results"></div>
@@ -1153,25 +1121,13 @@
     const API_NETEASE_SEARCH = "https://api.cenguigui.cn/api/music/netease/WyY_Dg.php";
     const API_NETEASE_DETAIL = "https://api.cenguigui.cn/api/netease/music_v1.php";
 
-    // GDStudio 相关：新四个源
+    // GDStudio 相关（保留 Qobuz 等）
     const GDS_SITE_TO_API = {
-      spotify: "https://music.gdstudio.xyz/api.php",
-      tencent: "https://music.gdstudio.xyz/api.php",
-      netease: "https://music.gdstudio.xyz/api.php",
-      kuwo: "https://music.gdstudio.xyz/api.php",
-      tidal: "https://music.gdstudio.xyz/api.php",
-      apple: "https://music.gdstudio.xyz/api.php",
-      migu: "https://music-api-cn.gdstudio.xyz/api.php",
-      kugou: "https://music-api-cn.gdstudio.xyz/api.php",
-      ximalaya: "https://music-api-cn.gdstudio.xyz/api.php",
-      joox: "https://music-api-hk.gdstudio.xyz/api.php",
       qobuz: "https://music-api-us.gdstudio.xyz/api.php",
-      ytmusic: "https://music-api-us.gdstudio.xyz/api.php",
-      bilibili: "https://music.gdstudio.xyz/api.php"
     };
 
-    const NETEASE_LIMIT = 5;           // 网易云 5 条
-    const PER_SOURCE_LIMIT = 5;        // 每个源 5 条
+    const NETEASE_LIMIT = 10;           // 网易云 10 条
+    const PER_SOURCE_LIMIT = 10;        // 每个源 10 条
 
     const searchForm = document.getElementById("searchForm");
     const searchInput = document.getElementById("searchInput");
@@ -1181,17 +1137,11 @@
 
     const sourceMiguCheckbox = document.getElementById("sourceMiguCheckbox");
     const sourceNeteaseCheckbox = document.getElementById("sourceNeteaseCheckbox");
-    const sourceSpotifyCheckbox = document.getElementById("sourceSpotifyCheckbox");
-    const sourceAppleCheckbox   = document.getElementById("sourceAppleCheckbox");
-    const sourceTidalCheckbox   = document.getElementById("sourceTidalCheckbox");
     const sourceQobuzCheckbox   = document.getElementById("sourceQobuzCheckbox");
 
     const sourceFilterLabelEl = document.getElementById("sourceFilterLabel");
     const sourceFilterMiguTextEl = document.getElementById("sourceFilterMiguText");
     const sourceFilterNeteaseTextEl = document.getElementById("sourceFilterNeteaseText");
-    const sourceFilterSpotifyTextEl = document.getElementById("sourceFilterSpotifyText");
-    const sourceFilterAppleTextEl   = document.getElementById("sourceFilterAppleText");
-    const sourceFilterTidalTextEl   = document.getElementById("sourceFilterTidalText");
     const sourceFilterQobuzTextEl   = document.getElementById("sourceFilterQobuzText");
 
     const audioEl = document.getElementById("audioEl");
@@ -1279,16 +1229,10 @@
         nowPlayingIdleSinger: "小皮卡说：先来一首试试？",
         sourceLabelMigu: "咪咕音乐",
         sourceLabelNetease: "网易云音乐",
-        sourceLabelSpotify: "Spotify",
-        sourceLabelApple: "Apple Music",
-        sourceLabelTidal: "Tidal",
         sourceLabelQobuz: "Qobuz",
         sourceFilterLabel: "搜索来源：",
         sourceFilterMigu: "咪咕音乐",
         sourceFilterNetease: "网易云音乐",
-        sourceFilterSpotify: "Spotify",
-        sourceFilterApple: "Apple Music",
-        sourceFilterTidal: "Tidal",
         sourceFilterQobuz: "Qobuz",
         playModeSequence: "顺序播放",
         playModeLoopAll: "列表循环",
@@ -1341,16 +1285,10 @@
         nowPlayingIdleSinger: "Pikachu says: pick something to play!",
         sourceLabelMigu: "MiGu Music",
         sourceLabelNetease: "NetEase Cloud",
-        sourceLabelSpotify: "Spotify",
-        sourceLabelApple: "Apple Music",
-        sourceLabelTidal: "Tidal",
         sourceLabelQobuz: "Qobuz",
         sourceFilterLabel: "Sources:",
         sourceFilterMigu: "MiGu",
         sourceFilterNetease: "NetEase",
-        sourceFilterSpotify: "Spotify",
-        sourceFilterApple: "Apple",
-        sourceFilterTidal: "Tidal",
         sourceFilterQobuz: "Qobuz",
         playModeSequence: "Sequence",
         playModeLoopAll: "Loop All",
@@ -1533,10 +1471,7 @@
       const names = [];
       if (sourceMiguCheckbox && sourceMiguCheckbox.checked)     names.push(t.sourceLabelMigu);
       if (sourceNeteaseCheckbox && sourceNeteaseCheckbox.checked) names.push(t.sourceLabelNetease);
-      if (sourceSpotifyCheckbox && sourceSpotifyCheckbox.checked) names.push(t.sourceLabelSpotify);
-      if (sourceAppleCheckbox && sourceAppleCheckbox.checked)     names.push(t.sourceLabelApple);
-      if (sourceTidalCheckbox && sourceTidalCheckbox.checked)     names.push(t.sourceLabelTidal);
-      if (sourceQobuzCheckbox && sourceQobuzCheckbox.checked)     names.push(t.sourceLabelQobuz);
+      if (sourceQobuzCheckbox && sourceQobuzCheckbox.checked)   names.push(t.sourceLabelQobuz);
 
       let text;
       if (!names.length) {
@@ -1579,10 +1514,7 @@
       if (sourceFilterLabelEl) sourceFilterLabelEl.textContent = t.sourceFilterLabel;
       if (sourceFilterMiguTextEl) sourceFilterMiguTextEl.textContent = t.sourceFilterMigu;
       if (sourceFilterNeteaseTextEl) sourceFilterNeteaseTextEl.textContent = t.sourceFilterNetease;
-      if (sourceFilterSpotifyTextEl) sourceFilterSpotifyTextEl.textContent = t.sourceFilterSpotify;
-      if (sourceFilterAppleTextEl)   sourceFilterAppleTextEl.textContent   = t.sourceFilterApple;
-      if (sourceFilterTidalTextEl)   sourceFilterTidalTextEl.textContent   = t.sourceFilterTidal;
-      if (sourceFilterQobuzTextEl)   sourceFilterQobuzTextEl.textContent   = t.sourceFilterQobuz;
+      if (sourceFilterQobuzTextEl) sourceFilterQobuzTextEl.textContent = t.sourceFilterQobuz;
 
       if (!currentSongData) {
         songTitleEl.textContent = t.nowPlayingIdleTitle;
@@ -1625,12 +1557,6 @@
         let labelText;
         if (currentSourceType === "netease") {
           labelText = t.sourceLabelNetease;
-        } else if (currentSourceType === "spotify") {
-          labelText = t.sourceLabelSpotify;
-        } else if (currentSourceType === "apple") {
-          labelText = t.sourceLabelApple;
-        } else if (currentSourceType === "tidal") {
-          labelText = t.sourceLabelTidal;
         } else if (currentSourceType === "qobuz") {
           labelText = t.sourceLabelQobuz;
         } else {
@@ -1644,9 +1570,6 @@
       const allCbs = [
         { key: "migu",    el: sourceMiguCheckbox },
         { key: "netease", el: sourceNeteaseCheckbox },
-        { key: "spotify", el: sourceSpotifyCheckbox },
-        { key: "apple",   el: sourceAppleCheckbox },
-        { key: "tidal",   el: sourceTidalCheckbox },
         { key: "qobuz",   el: sourceQobuzCheckbox }
       ].filter(it => it.el);
 
@@ -1684,21 +1607,6 @@
     if (sourceNeteaseCheckbox) {
       sourceNeteaseCheckbox.addEventListener("change", () =>
         ensureAtLeastOneSource("netease")
-      );
-    }
-    if (sourceSpotifyCheckbox) {
-      sourceSpotifyCheckbox.addEventListener("change", () =>
-        ensureAtLeastOneSource("spotify")
-      );
-    }
-    if (sourceAppleCheckbox) {
-      sourceAppleCheckbox.addEventListener("change", () =>
-        ensureAtLeastOneSource("apple")
-      );
-    }
-    if (sourceTidalCheckbox) {
-      sourceTidalCheckbox.addEventListener("change", () =>
-        ensureAtLeastOneSource("tidal")
       );
     }
     if (sourceQobuzCheckbox) {
@@ -2087,7 +1995,7 @@
             out.push({
               title: title,
               singer: singer,
-              source: sr.source,  // e.g. spotify/apple/tidal/qobuz
+              source: sr.source,  // 例如 qobuz
               data: data
             });
 
@@ -2109,12 +2017,9 @@
       try {
         let useMigu     = !sourceMiguCheckbox     || sourceMiguCheckbox.checked;
         let useNetease  = !sourceNeteaseCheckbox  || sourceNeteaseCheckbox.checked;
-        let useSpotify  = !sourceSpotifyCheckbox  || sourceSpotifyCheckbox.checked;
-        let useApple    = !sourceAppleCheckbox    || sourceAppleCheckbox.checked;
-        let useTidal    = !sourceTidalCheckbox    || sourceTidalCheckbox.checked;
         let useQobuz    = !sourceQobuzCheckbox    || sourceQobuzCheckbox.checked;
 
-        if (!useMigu && !useNetease && !useSpotify && !useApple && !useTidal && !useQobuz) {
+        if (!useMigu && !useNetease && !useQobuz) {
           useMigu = true;
           if (sourceMiguCheckbox) sourceMiguCheckbox.checked = true;
         }
@@ -2140,26 +2045,14 @@
           ? fetch(neteaseUrl).then((r) => r.json()).catch(() => null)
           : Promise.resolve(null);
 
-        const spotifyPromise = useSpotify
-          ? searchGDStudioSource("spotify", query, PER_SOURCE_LIMIT)
-          : Promise.resolve([]);
-        const applePromise = useApple
-          ? searchGDStudioSource("apple", query, PER_SOURCE_LIMIT)
-          : Promise.resolve([]);
-        const tidalPromise = useTidal
-          ? searchGDStudioSource("tidal", query, PER_SOURCE_LIMIT)
-          : Promise.resolve([]);
         const qobuzPromise = useQobuz
           ? searchGDStudioSource("qobuz", query, PER_SOURCE_LIMIT)
           : Promise.resolve([]);
 
-        const [miguText, neteaseJson, spotifyList, appleList, tidalList, qobuzList] =
+        const [miguText, neteaseJson, qobuzList] =
           await Promise.all([
             miguPromise,
             neteasePromise,
-            spotifyPromise,
-            applePromise,
-            tidalPromise,
             qobuzPromise
           ]);
 
@@ -2219,15 +2112,6 @@
           });
         }
 
-        if (useSpotify && Array.isArray(spotifyList)) {
-          pushGDList(spotifyList, "spotify");
-        }
-        if (useApple && Array.isArray(appleList)) {
-          pushGDList(appleList, "apple");
-        }
-        if (useTidal && Array.isArray(tidalList)) {
-          pushGDList(tidalList, "tidal");
-        }
         if (useQobuz && Array.isArray(qobuzList)) {
           pushGDList(qobuzList, "qobuz");
         }
@@ -2306,9 +2190,6 @@
         const chip = document.createElement("span");
         let chipClass = "source-chip-migu";
         if (item.source === "netease") chipClass = "source-chip-netease";
-        else if (item.source === "spotify") chipClass = "source-chip-spotify";
-        else if (item.source === "apple") chipClass = "source-chip-apple";
-        else if (item.source === "tidal") chipClass = "source-chip-tidal";
         else if (item.source === "qobuz") chipClass = "source-chip-qobuz";
         chip.className = "source-chip " + chipClass;
 
@@ -2318,9 +2199,6 @@
 
         let label;
         if (item.source === "netease") label = t.sourceLabelNetease;
-        else if (item.source === "spotify") label = t.sourceLabelSpotify;
-        else if (item.source === "apple") label = t.sourceLabelApple;
-        else if (item.source === "tidal") label = t.sourceLabelTidal;
         else if (item.source === "qobuz") label = t.sourceLabelQobuz;
         else label = t.sourceLabelMigu;
         chipText.textContent = label;
@@ -2474,7 +2352,7 @@
         data._source = "migu";
         return data;
       } else {
-        // 其它源（spotify/apple/tidal/qobuz）在 searchGDStudioSource 里已经填好 data
+        // 其它源（例如 qobuz）在 searchGDStudioSource 里已经填好 data
         if (item.data) return item.data;
         throw new Error("Unsupported source");
       }
@@ -2493,8 +2371,8 @@
         if (item.source === "migu") {
           return p.query === item.query && p.apiIndex === item.apiIndex;
         }
-        // gdstudio 源：按 title + singer 粗略匹配
-        if (["spotify", "apple", "tidal", "qobuz"].includes(item.source)) {
+        // 其它源（如 qobuz）：按 title + singer 粗略匹配
+        if (item.source !== "migu" && item.source !== "netease") {
           return p.title === item.title && p.singer === item.singer;
         }
         return false;
@@ -2603,15 +2481,6 @@
       if (type === "netease") {
         labelText = t2.sourceLabelNetease;
         dotClass = "source-netease";
-      } else if (type === "spotify") {
-        labelText = t2.sourceLabelSpotify;
-        dotClass = "source-spotify";
-      } else if (type === "apple") {
-        labelText = t2.sourceLabelApple;
-        dotClass = "source-apple";
-      } else if (type === "tidal") {
-        labelText = t2.sourceLabelTidal;
-        dotClass = "source-tidal";
       } else if (type === "qobuz") {
         labelText = t2.sourceLabelQobuz;
         dotClass = "source-qobuz";
