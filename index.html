@@ -6,29 +6,44 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
     <style>
         :root{
-            --bg:#0b0e1a;
-            --panel:rgba(15,18,30,0.92);
-            --accent:#ffcd32;
+            --bg:linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            --panel:rgba(0,0,0,0.3);
+            --accent:#ff6b6b;
             --text-main:#ffffff;
-            --text-sub:#9b9fab;
-            --border:rgba(255,255,255,0.08);
-            --glass:rgba(18,22,37,0.75);
+            --text-sub:rgba(255,255,255,0.7);
+            --border:rgba(255,255,255,0.1);
+            --glass:rgba(0,0,0,0.2);
         }
         *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
         html,body{margin:0;padding:0;height:100%;background:var(--bg);color:var(--text-main);font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB",Microsoft YaHei,sans-serif;overflow:hidden;}
-        #app{display:flex;flex-direction:column;height:100%;max-width:540px;margin:0 auto;background:var(--bg);}
+        #app{display:flex;flex-direction:column;height:100%;max-width:540px;margin:0 auto;background:transparent;backdrop-filter:blur(20px);border-radius:20px;box-shadow:0 8px 32px rgba(0,0,0,0.3);}
 
         /* 顶部导航 */
-        .topbar{flex-shrink:0;height:52px;display:flex;align-items:center;padding:0 16px;background:var(--panel);border-bottom:1px solid var(--border);}
-        .topbar .logo{font-size:18px;font-weight:600;letter-spacing:.5px;color:var(--accent);}
-        .topbar .search{flex:1;margin:0 12px;position:relative;}
-        .topbar .search input{width:100%;height:32px;border-radius:16px;border:none;background:rgba(255,255,255,.08);color:var(--text-main);padding:0 32px 0 12px;font-size:14px;outline:none;}
-        .topbar .search .icon{position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--text-sub);cursor:pointer;}
-        .topbar .search .loading{position:absolute;right:36px;top:50%;transform:translateY(-50%);width:14px;height:14px;border:2px solid transparent;border-top:2px solid var(--accent);border-radius:50%;animation:spin .6s linear infinite;display:none;}
+        .topbar{flex-shrink:0;height:40px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;background:var(--panel);border-bottom:1px solid var(--border);backdrop-filter:blur(20px);border-radius:20px 20px 0 0;}
+        .topbar .logo{font-size:18px;font-weight:700;letter-spacing:.5px;color:var(--accent);text-shadow:0 0 10px rgba(255,107,107,0.5);}
+        .topbar .author{font-size:12px;color:var(--text-sub);}
+        
+        /* 版权声明 */
+        .copyright{flex-shrink:0;padding:8px 16px;background:var(--panel);border-bottom:1px solid var(--border);font-size:11px;color:var(--text-sub);text-align:center;display:flex;align-items:center;justify-content:center;gap:8px;}
+        .disclaimer-btn{padding:4px 8px;border:1px solid var(--border);border-radius:12px;background:rgba(255,255,255,.1);color:var(--text-sub);font-size:10px;cursor:pointer;}
+        
+        /* 免责声明弹窗 */
+        .disclaimer-modal{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;display:none;align-items:center;justify-content:center;}
+        .disclaimer-content{background:var(--panel);border-radius:16px;padding:20px;margin:20px;max-width:400px;backdrop-filter:blur(20px);border:1px solid var(--border);}
+        .disclaimer-title{font-size:16px;font-weight:600;color:var(--accent);margin-bottom:16px;text-align:center;}
+        .disclaimer-text{font-size:13px;line-height:1.6;color:var(--text-main);margin-bottom:16px;}
+        .disclaimer-close{width:100%;padding:8px;border:none;border-radius:8px;background:var(--accent);color:#000;font-size:14px;cursor:pointer;}
+        
+        /* 搜索栏 */
+        .searchbar{flex-shrink:0;padding:8px 16px;background:var(--panel);border-bottom:1px solid var(--border);}
+        .searchbar .search{position:relative;}
+        .searchbar .search input{width:100%;height:32px;border-radius:20px;border:none;background:rgba(255,255,255,.15);color:var(--text-main);padding:0 32px 0 12px;font-size:14px;outline:none;backdrop-filter:blur(10px);}
+        .searchbar .search .icon{position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--text-sub);cursor:pointer;}
+        .searchbar .search .loading{position:absolute;right:36px;top:50%;transform:translateY(-50%);width:14px;height:14px;border:2px solid transparent;border-top:2px solid var(--accent);border-radius:50%;animation:spin .6s linear infinite;display:none;}
         @keyframes spin{to{transform:translateY(-50%) rotate(360deg);}}
 
         /* 来源选择条 */
-        .sourcebar{flex-shrink:0;display:flex;gap:8px;padding:8px 16px;background:var(--panel);border-bottom:1px solid var(--border);font-size:12px;color:var(--text-sub);}
+        .sourcebar{flex-shrink:0;display:flex;gap:8px;padding:8px 16px;background:var(--panel);border-bottom:1px solid var(--border);font-size:12px;color:var(--text-sub);justify-content:center;}
         .sourcebar label{display:flex;align-items:center;gap:4px;}
         .sourcebar input{margin:0;width:12px;height:12px;accent-color:var(--accent);}
 
@@ -57,12 +72,12 @@
         .track.playing .playbtn{background:#fff;color:var(--accent);}
 
         /* 底部播放器 - 简化版 */
-        .player{flex-shrink:0;height:64px;background:var(--panel);border-top:1px solid var(--border);display:flex;align-items:center;padding:8px 16px;position:relative;backdrop-filter:blur(20px);}
+        .player{flex-shrink:0;height:64px;background:var(--panel);border-top:1px solid var(--border);display:flex;align-items:center;padding:8px 16px;position:relative;backdrop-filter:blur(30px);border-radius:0 0 20px 20px;}
         .player .cover-wrapper{position:relative;margin-right:12px;}
-        .player .cover{width:48px;height:48px;border-radius:8px;background:rgba(255,255,255,.08);object-fit:cover;box-shadow:0 2px 8px rgba(0,0,0,.3);}
-        .player .play-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.5);border-radius:8px;opacity:0;transition:opacity .2s;cursor:pointer;}
+        .player .cover{width:48px;height:48px;border-radius:12px;background:rgba(255,255,255,.1);object-fit:cover;box-shadow:0 4px 16px rgba(0,0,0,.2);}
+        .player .play-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.3);border-radius:12px;opacity:0;transition:opacity .2s;cursor:pointer;}
         .player .play-overlay:hover{opacity:1;}
-        .player .play-overlay button{width:24px;height:24px;border-radius:50%;border:none;background:var(--accent);color:#000;font-size:12px;display:flex;align-items:center;justify-content:center;}
+        .player .play-overlay button{width:24px;height:24px;border-radius:50%;border:none;background:var(--accent);color:#fff;font-size:12px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(255,107,107,0.4);}
         .player .info{flex:1;min-width:0;margin-right:12px;}
         .player .title{font-size:15px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px;}
         .player .artist{font-size:12px;color:var(--text-sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -380,19 +395,30 @@
     <!-- 顶部 -->
     <header class="topbar">
         <div class="logo">墨白音乐盒</div>
-        <div class="search">
-            <input id="searchInput" placeholder="搜索音乐、歌手">
-            <span class="loading" id="loading"></span>
-            <span class="icon" id="searchIcon">🔍</span>
-        </div>
+        <div class="author">QQ: 37010871</div>
     </header>
-
+    
+    <!-- 版权声明 -->
+    <div class="copyright">
+        <span>本站仅作为学习演示，音乐版权归各平台与原作者所有。</span>
+        <button class="disclaimer-btn" id="disclaimerBtn">免责声明</button>
+    </div>
+    
     <!-- 来源选择 -->
     <div class="sourcebar">
         <label><input type="checkbox" data-src="migu">咪咕</label>
         <label><input type="checkbox" data-src="netease" checked>网易云</label>
         <label><input type="checkbox" data-src="qq">QQ</label>
         <label><input type="checkbox" data-src="kuwo">酷我</label>
+    </div>
+    
+    <!-- 搜索栏 -->
+    <div class="searchbar">
+        <div class="search">
+            <input id="searchInput" placeholder="搜索音乐、歌手">
+            <span class="loading" id="loading"></span>
+            <span class="icon" id="searchIcon">🔍</span>
+        </div>
     </div>
 
     <!-- 中间 -->
@@ -503,6 +529,20 @@
                 <button class="volume-preset" data-volume="1.0">100%</button>
             </div>
         </div>
+    </div>
+</div>
+
+<!-- 免责声明弹窗 -->
+<div id="disclaimerModal" class="disclaimer-modal">
+    <div class="disclaimer-content">
+        <div class="disclaimer-title">免责声明</div>
+        <div class="disclaimer-text">
+            本站所有数据均系网友搜集自互联网后分享，仅供音乐爱好者交流使用。<br><br>
+            音频版权归原网站及版权方所有，本站不提供任何音频存储和贩卖服务，支持购买正版音乐。<br><br>
+            如内容侵犯您的权益，请通过以下方式联系我们删除：<br><br>
+            QQ: 37010871
+        </div>
+        <button class="disclaimer-close" id="disclaimerClose">我知道了</button>
     </div>
 </div>
 
@@ -701,6 +741,9 @@
             
             dom.searchInput.addEventListener('keydown',e=>{if(e.key==='Enter'){state.keyword=dom.searchInput.value.trim();searchAll(true);}});
             $('searchIcon').addEventListener('click',()=>{state.keyword=dom.searchInput.value.trim();searchAll(true);});
+            $('disclaimerBtn').addEventListener('click',()=>{$('disclaimerModal').style.display='flex';});
+            $('disclaimerClose').addEventListener('click',()=>{$('disclaimerModal').style.display='none';});
+            $('disclaimerModal').addEventListener('click',e=>{if(e.target===$('disclaimerModal'))$('disclaimerModal').style.display='none';});
             document.querySelectorAll('.sourcebar input').forEach(cb=>cb.addEventListener('change',()=>{state.enabledSources[cb.dataset.src]=cb.checked;}));
             document.querySelectorAll('.tab').forEach(tab=>tab.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t===tab));renderList();}));
             
