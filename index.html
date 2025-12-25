@@ -935,65 +935,21 @@
             display:block;
             opacity:1;
         }
+        
+        /* 图标固定尺寸，防止变化时影响布局 */
+        svg[data-lucide], i[data-lucide] {
+            width: 1em !important;
+            height: 1em !important;
+            flex-shrink: 0 !important;
+            display: inline-block !important;
+        }
 
-        /* 手机端图标大小优化 - 针对苹果浏览器 */
-        @media (max-width: 768px) {
-            svg {
-                width: 24px !important;
-                height: 24px !important;
-                min-width: 24px !important;
-                min-height: 24px !important;
-            }
-            
-            .searchbar .search .icon svg {
-                width: 24px !important;
-                height: 24px !important;
-            }
-            
-            .player .controls button svg {
-                width: 20px !important;
-                height: 20px !important;
-            }
-            
-            .player .menu-btn svg {
-                width: 20px !important;
-                height: 20px !important;
-            }
-            
-            .close-btn svg {
-                width: 24px !important;
-                height: 24px !important;
-            }
-            
-            .control-btn svg {
-                width: 30px !important;
-                height: 30px !important;
-            }
-            
-            .play-btn svg {
-                width: 40px !important;
-                height: 40px !important;
-            }
-            
-            .action-btn svg {
-                width: 22px !important;
-                height: 22px !important;
-            }
-            
-            .lyrics-play-btn svg {
-                width: 30px !important;
-                height: 30px !important;
-            }
-            
-            .playlist-mode-btn svg {
-                width: 20px !important;
-                height: 20px !important;
-            }
-            
-            .track .playbtn svg {
-                width: 20px !important;
-                height: 20px !important;
-            }
+        /* 图标固定尺寸，防止变化时影响布局 */
+        svg[data-lucide], i[data-lucide] {
+            width: 1em !important;
+            height: 1em !important;
+            flex-shrink: 0 !important;
+            display: inline-block !important;
         }
     </style>
 </head>
