@@ -936,56 +936,63 @@
             opacity:1;
         }
 
-        /* 手机端图标大小优化 - 平衡尺寸 */
+        /* 手机端图标大小优化 - 针对苹果浏览器 */
         @media (max-width: 768px) {
+            svg {
+                width: 24px !important;
+                height: 24px !important;
+                min-width: 24px !important;
+                min-height: 24px !important;
+            }
+            
             .searchbar .search .icon svg {
+                width: 24px !important;
+                height: 24px !important;
+            }
+            
+            .player .controls button svg {
                 width: 20px !important;
                 height: 20px !important;
             }
             
-            .player .controls button svg {
-                width: 18px !important;
-                height: 18px !important;
-            }
-            
             .player .menu-btn svg {
-                width: 18px !important;
-                height: 18px !important;
+                width: 20px !important;
+                height: 20px !important;
             }
             
             .close-btn svg {
+                width: 24px !important;
+                height: 24px !important;
+            }
+            
+            .control-btn svg {
+                width: 30px !important;
+                height: 30px !important;
+            }
+            
+            .play-btn svg {
+                width: 40px !important;
+                height: 40px !important;
+            }
+            
+            .action-btn svg {
                 width: 22px !important;
                 height: 22px !important;
             }
             
-            .control-btn svg {
-                width: 28px !important;
-                height: 28px !important;
+            .lyrics-play-btn svg {
+                width: 30px !important;
+                height: 30px !important;
             }
             
-            .play-btn svg {
-                width: 36px !important;
-                height: 36px !important;
-            }
-            
-            .action-btn svg {
+            .playlist-mode-btn svg {
                 width: 20px !important;
                 height: 20px !important;
             }
             
-            .lyrics-play-btn svg {
-                width: 28px !important;
-                height: 28px !important;
-            }
-            
-            .playlist-mode-btn svg {
-                width: 18px !important;
-                height: 18px !important;
-            }
-            
             .track .playbtn svg {
-                width: 18px !important;
-                height: 18px !important;
+                width: 20px !important;
+                height: 20px !important;
             }
         }
     </style>
