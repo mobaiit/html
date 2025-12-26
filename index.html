@@ -12,41 +12,35 @@
     <style>
         :root{
             --bg:linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-            --panel:#1a1a2e;
+            --panel:rgba(0,0,0,0.3);
             --accent:#ff6b6b;
             --text-main:#ffffff;
             --text-sub:rgba(255,255,255,0.7);
             --border:rgba(255,255,255,0.1);
-            --glass:#1a1a2e;
+            --glass:rgba(0,0,0,0.2);
         }
         #app.alt-style{
             --bg:linear-gradient(135deg, #1a1a1f 0%, #1e1e24 50%, #222228 100%);
-            --panel:#1a1a1f;
             --accent:#1db954;
         }
         #app.alt-style-1{
             --bg:linear-gradient(135deg, #1f1a2e 0%, #1a2e2a 50%, #1e2e1f 100%);
-            --panel:#1f1a2e;
             --accent:#ff6b35;
         }
         #app.alt-style-2{
             --bg:linear-gradient(135deg, #2a2a3a 0%, #2e2a3e 50%, #3a2a3e 100%);
-            --panel:#2a2a3a;
             --accent:#ff1744;
         }
         #app.alt-style-3{
             --bg:linear-gradient(135deg, #1a2a3a 0%, #1a2e3a 50%, #1e3a2a 100%);
-            --panel:#1a2a3a;
             --accent:#00d4ff;
         }
         #app.alt-style-4{
             --bg:linear-gradient(135deg, #3a2a2e 0%, #3e2e1a 50%, #3a2e2a 100%);
-            --panel:#3a2a2e;
             --accent:#ffeb3b;
         }
         #app.alt-style-5{
             --bg:linear-gradient(135deg, #2a3a3a 0%, #2e3a3e 50%, #3a3e3a 100%);
-            --panel:#2a3a3a;
             --accent:#ffd700;
         }
         *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
@@ -69,7 +63,7 @@
         .disclaimer-btn{padding:4px 8px;border:1px solid var(--border);border-radius:12px;background:rgba(255,255,255,.1);color:var(--text-sub);font-size:10px;cursor:pointer;}
 
         /* 免责声明弹窗 */
-        .disclaimer-modal{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;display:none;align-items:center;justify-content:center;}
+        .disclaimer-modal{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;display:none;align-items:center;justify-content:center;}
         .disclaimer-content{background:var(--panel);border-radius:16px;padding:20px;margin:20px;max-width:400px;backdrop-filter:blur(20px);border:1px solid var(--border);}
         .disclaimer-title{font-size:16px;font-weight:600;color:var(--accent);margin-bottom:16px;text-align:center;}
         .disclaimer-text{font-size:13px;line-height:1.6;color:var(--text-main);margin-bottom:16px;}
@@ -159,7 +153,7 @@
         .full-player-panel{
             position:fixed;
             inset:0;
-            background:var(--bg);
+            background:linear-gradient(135deg,rgba(26,26,46,0.5),rgba(26,31,58,0.5));
             display:flex;
             flex-direction:column;
             transform:translateY(100%);
@@ -169,7 +163,35 @@
         .full-player-panel.show{
             transform:translateY(0);
         }
-
+        .full-player-opacity-control{
+            position:absolute;
+            top:20px;
+            right:20px;
+            display:flex;
+            align-items:center;
+            gap:8px;
+            z-index:104;
+        }
+        .lyrics-view.show ~ .full-player-opacity-control,
+        .playlist-view[style*="flex"] ~ .full-player-opacity-control{
+            display:none;
+        }
+        .full-opacity-slider{
+            width:80px;
+            height:4px;
+            background:rgba(255,255,255,.2);
+            border-radius:2px;
+            outline:none;
+            -webkit-appearance:none;
+        }
+        .full-opacity-slider::-webkit-slider-thumb{
+            width:12px;
+            height:12px;
+            background:var(--accent);
+            border-radius:50%;
+            -webkit-appearance:none;
+            cursor:pointer;
+        }
         .full-player-header{
             display:flex;
             align-items:center;
@@ -431,7 +453,7 @@
         .playlist-view{
             position:absolute;
             inset:0;
-            background:var(--bg);
+            background:rgba(26,26,46,0.9);
             display:flex;
             flex-direction:column;
             z-index:103;
@@ -473,7 +495,31 @@
             font-size:12px;
             cursor:pointer;
         }
-
+        .playlist-opacity-control{
+            position:absolute;
+            top:70px;
+            right:20px;
+            display:none;
+            align-items:center;
+            gap:8px;
+            z-index:104;
+        }
+        .opacity-slider{
+            width:80px;
+            height:4px;
+            background:rgba(255,255,255,.2);
+            border-radius:2px;
+            outline:none;
+            -webkit-appearance:none;
+        }
+        .opacity-slider::-webkit-slider-thumb{
+            width:12px;
+            height:12px;
+            background:var(--accent);
+            border-radius:50%;
+            -webkit-appearance:none;
+            cursor:pointer;
+        }
         .playlist-scroll{
             flex:1;
             overflow-y:auto;
@@ -595,7 +641,7 @@
             text-shadow:0 0 20px rgba(255,105,180,.8);
         }
         .lyrics-view.alt-style{
-            background:var(--bg);
+            background:linear-gradient(135deg,rgba(16,16,20,.95),rgba(32,32,40,.95));
         }
         .lyrics-view.alt-style .lyrics-scroll-full{
             color:#e0e0e0;
@@ -605,7 +651,7 @@
             text-shadow:0 0 20px rgba(29,185,84,.6);
         }
         .lyrics-view.alt-style-1{
-            background:var(--bg);
+            background:linear-gradient(135deg,rgba(20,20,30,.95),rgba(40,40,60,.95));
         }
         .lyrics-view.alt-style-1 .lyrics-scroll-full{
             color:#f0f0f0;
@@ -615,7 +661,7 @@
             text-shadow:0 0 20px rgba(255,107,53,.6);
         }
         .lyrics-view.alt-style-2{
-            background:var(--bg);
+            background:linear-gradient(135deg,rgba(25,25,35,.95),rgba(45,45,65,.95));
         }
         .lyrics-view.alt-style-2 .lyrics-scroll-full{
             color:#ffffff;
@@ -625,7 +671,7 @@
             text-shadow:0 0 20px rgba(255,23,68,.6);
         }
         .lyrics-view.alt-style-3{
-            background:var(--bg);
+            background:linear-gradient(135deg,rgba(18,18,25,.95),rgba(35,35,50,.95));
         }
         .lyrics-view.alt-style-3 .lyrics-scroll-full{
             color:#f5f5f5;
@@ -635,7 +681,7 @@
             text-shadow:0 0 20px rgba(0,212,255,.6);
         }
         .lyrics-view.alt-style-4{
-            background:var(--bg);
+            background:linear-gradient(135deg,rgba(200,50,50,.7),rgba(150,30,30,.7));
         }
         .lyrics-view.alt-style-4 .lyrics-scroll-full{
             color:#ffffff;
@@ -645,7 +691,7 @@
             text-shadow:0 0 20px rgba(255,235,59,.8);
         }
         .lyrics-view.alt-style-5{
-            background:var(--bg);
+            background:linear-gradient(135deg,rgba(30,144,255,.7),rgba(0,191,255,.7));
         }
         .lyrics-view.alt-style-5 .lyrics-scroll-full{
             color:#ffffff;
@@ -655,7 +701,7 @@
             text-shadow:0 0 20px rgba(255,215,0,.8);
         }
         .cover-lyrics-container.alt-style{
-            background:var(--bg);
+            background:linear-gradient(135deg,rgba(16,16,20,.95),rgba(32,32,40,.95));
         }
         .cover-lyrics-container.alt-style .inline-lyrics{
             color:#e0e0e0;
@@ -665,7 +711,7 @@
             text-shadow:0 0 20px rgba(29,185,84,.6);
         }
         .cover-lyrics-container.alt-style-1{
-            background:var(--bg);
+            background:linear-gradient(135deg,rgba(20,20,30,.95),rgba(40,40,60,.95));
         }
         .cover-lyrics-container.alt-style-1 .inline-lyrics{
             color:#f0f0f0;
@@ -675,7 +721,7 @@
             text-shadow:0 0 20px rgba(255,107,53,.6);
         }
         .cover-lyrics-container.alt-style-2{
-            background:var(--bg);
+            background:linear-gradient(135deg,rgba(25,25,35,.95),rgba(45,45,65,.95));
         }
         .cover-lyrics-container.alt-style-2 .inline-lyrics{
             color:#ffffff;
@@ -685,7 +731,7 @@
             text-shadow:0 0 20px rgba(255,23,68,.6);
         }
         .cover-lyrics-container.alt-style-3{
-            background:var(--bg);
+            background:linear-gradient(135deg,rgba(18,18,25,.95),rgba(35,35,50,.95));
         }
         .cover-lyrics-container.alt-style-3 .inline-lyrics{
             color:#f5f5f5;
@@ -695,7 +741,7 @@
             text-shadow:0 0 20px rgba(0,212,255,.6);
         }
         .cover-lyrics-container.alt-style-4{
-            background:var(--bg);
+            background:linear-gradient(135deg,rgba(200,50,50,.95),rgba(150,30,30,.95));
         }
         .cover-lyrics-container.alt-style-4 .inline-lyrics{
             color:#ffffff;
@@ -705,13 +751,13 @@
             text-shadow:0 0 20px rgba(255,235,59,.8);
         }
         .cover-lyrics-container.alt-style-5{
-            background:var(--bg);
+            background:linear-gradient(135deg,rgba(30,144,255,.95),rgba(0,191,255,.95));
         }
         .cover-lyrics-container.alt-style-5 .inline-lyrics{
             color:#ffffff;
         }
         .full-player-panel.alt-style{
-            background:var(--bg);
+            background:linear-gradient(135deg,rgba(16,16,20,.95),rgba(32,32,40,.95));
         }
         .full-player-panel.alt-style .inline-lyrics{
             color:#e0e0e0;
@@ -721,7 +767,7 @@
             text-shadow:0 0 20px rgba(29,185,84,.6);
         }
         .full-player-panel.alt-style-1{
-            background:var(--bg);
+            background:linear-gradient(135deg,rgba(20,20,30,.95),rgba(40,40,60,.95));
         }
         .full-player-panel.alt-style-1 .inline-lyrics{
             color:#f0f0f0;
@@ -731,7 +777,7 @@
             text-shadow:0 0 20px rgba(255,107,53,.6);
         }
         .full-player-panel.alt-style-2{
-            background:var(--bg);
+            background:linear-gradient(135deg,rgba(25,25,35,.95),rgba(45,45,65,.95));
         }
         .full-player-panel.alt-style-2 .inline-lyrics{
             color:#ffffff;
@@ -741,7 +787,7 @@
             text-shadow:0 0 20px rgba(255,23,68,.6);
         }
         .full-player-panel.alt-style-3{
-            background:var(--bg);
+            background:linear-gradient(135deg,rgba(18,18,25,.95),rgba(35,35,50,.95));
         }
         .full-player-panel.alt-style-3 .inline-lyrics{
             color:#f5f5f5;
@@ -751,7 +797,7 @@
             text-shadow:0 0 20px rgba(0,212,255,.6);
         }
         .full-player-panel.alt-style-4{
-            background:var(--bg);
+            background:linear-gradient(135deg,rgba(200,50,50,.7),rgba(150,30,30,.7));
         }
         .full-player-panel.alt-style-4 .inline-lyrics{
             color:#ffffff;
@@ -761,7 +807,7 @@
             text-shadow:0 0 20px rgba(255,235,59,.8);
         }
         .full-player-panel.alt-style-5{
-            background:var(--bg);
+            background:linear-gradient(135deg,rgba(30,144,255,.7),rgba(0,191,255,.7));
         }
         .full-player-panel.alt-style-5 .inline-lyrics{
             color:#ffffff;
@@ -897,15 +943,14 @@
             flex-shrink: 0 !important;
             display: inline-block !important;
             transition: none !important;
-            opacity: 1 !important;
         }
 
-        /* 防止图标渲染时闪烁 */
-        .player, .searchbar, .tabs, .sourcebar, .settingsbar {
+        /* 防止图标渲染时闪烁和重排 */
+        .player, .searchbar, .track, .tab {
             will-change: auto;
             backface-visibility: hidden;
             -webkit-backface-visibility: hidden;
-            transform: translateZ(0);
+            contain: layout style;
         }
 
         /* 图标容器稳定性 */
@@ -918,15 +963,18 @@
             justify-content: center;
         }
 
-        /* 移动端优化 - 减少重绘 */
-        @media (max-width: 768px) {
-            * {
-                -webkit-transform: translateZ(0);
-                transform: translateZ(0);
-            }
-            .topbar, .copyright, .sourcebar, .settingsbar, .searchbar {
-                contain: layout style paint;
-            }
+        /* 防止搜索界面闪动 */
+        .searchbar .search {
+            contain: layout;
+        }
+        
+        .searchbar .search input {
+            contain: layout style;
+        }
+        
+        .searchbar .loading,
+        .searchbar .icon {
+            contain: layout;
         }
     </style>
 </head>
@@ -1025,6 +1073,10 @@
 <!-- 全屏播放器面板 -->
 <div id="fullPlayerMask" class="lyrics-mask"></div>
 <div id="fullPlayerPanel" class="full-player-panel">
+    <div class="full-player-opacity-control">
+        <span style="font-size:12px;color:var(--text-sub);">透明度</span>
+        <input id="fullPlayerOpacitySlider" class="full-opacity-slider" type="range" min="0.3" max="1" step="0.1" value="0.5">
+    </div>
     <div class="full-player-header">
         <button id="fullPlayerClose" class="close-btn"><i data-lucide="chevron-down"></i></button>
         <div style="width:40px;"></div>
@@ -1129,6 +1181,10 @@
             </div>
             <button id="batchModeBtn" class="playlist-mode-btn"><i data-lucide="download"></i></button>
         </div>
+        <div class="playlist-opacity-control">
+            <span style="font-size:12px;color:var(--text-sub);">透明度</span>
+            <input id="playlistOpacitySlider" class="opacity-slider" type="range" min="0.3" max="1" step="0.1" value="0.9">
+        </div>
         <div id="playlistScroll" class="playlist-scroll"></div>
     </div>
 </div>
@@ -1199,11 +1255,14 @@
             const loading = $('loading');
             const searchIcon = $('searchIcon');
             if(v){
+                // 使用visibility替代display避免重排
+                loading.style.visibility='visible';
                 loading.style.display='block';
-                searchIcon.style.display='none';
+                searchIcon.style.visibility='hidden';
             }else{
+                loading.style.visibility='hidden';
                 loading.style.display='none';
-                searchIcon.style.display='block';
+                searchIcon.style.visibility='visible';
             }
         }
 
@@ -1696,6 +1755,8 @@
             progressElements.fullHandle = dom.fullProgressHandle;
             progressElements.currentTime = $('currentTime');
             progressElements.totalTime = $('totalTime');
+            progressElements.progressWrapper = dom.progressWrapper;
+            progressElements.fullProgressWrapper = dom.fullProgressWrapper;
 
             // 搜索功能
             function performSearch(){
@@ -1726,13 +1787,11 @@
             $('disclaimerBtn').addEventListener('click',()=>{
                 const app = $('app');
                 const body = document.body;
-                const fullPlayerPanel = $('fullPlayerPanel');
-                const playlistView = $('playlistView');
                 const styles = ['', 'alt-style', 'alt-style-1', 'alt-style-2', 'alt-style-3', 'alt-style-4', 'alt-style-5'];
                 const names = ['默认风格', 'Spotify风格', 'Apple Music风格', 'YouTube Music风格', 'Tidal风格', '网易云风格', 'QQ音乐风格'];
-                styles.forEach(style => {if(style) {app.classList.remove(style);body.classList.remove(style);fullPlayerPanel.classList.remove(style);playlistView.classList.remove(style);}});
+                styles.forEach(style => {if(style) {app.classList.remove(style);body.classList.remove(style);}});
                 state.appStyle = (state.appStyle + 1) % styles.length;
-                if(styles[state.appStyle]) {app.classList.add(styles[state.appStyle]);body.classList.add(styles[state.appStyle]);fullPlayerPanel.classList.add(styles[state.appStyle]);playlistView.classList.add(styles[state.appStyle]);}
+                if(styles[state.appStyle]) {app.classList.add(styles[state.appStyle]);body.classList.add(styles[state.appStyle]);}
                 saveData();
                 toast(`切换到${names[state.appStyle]}`);
             });
@@ -1779,8 +1838,10 @@
                     showLyrics();
                 }
             });
-            dom.fullListBtn.addEventListener('click',()=>{renderPlaylist();$('playlistView').style.display='flex';setTimeout(()=>lucide.createIcons(),10);});
-            $('playlistBackBtn').addEventListener('click',()=>{$('playlistView').style.display='none';});
+            $('fullPlayerOpacitySlider').addEventListener('input',()=>{const opacity=parseFloat($('fullPlayerOpacitySlider').value);$('fullPlayerPanel').style.background=`linear-gradient(135deg,rgba(26,26,46,${opacity}),rgba(26,31,58,${opacity}))`;});
+            $('playlistOpacitySlider').addEventListener('input',()=>{const opacity=parseFloat($('playlistOpacitySlider').value);$('playlistView').style.background=`rgba(26,26,46,${opacity})`;});
+            dom.fullListBtn.addEventListener('click',()=>{renderPlaylist();$('playlistView').style.display='flex';$('fullPlayerOpacitySlider').parentElement.style.display='none';setTimeout(()=>lucide.createIcons(),10);});
+            $('playlistBackBtn').addEventListener('click',()=>{$('playlistView').style.display='none';$('fullPlayerOpacitySlider').parentElement.style.display='flex';});
             $('playlistModeBtn').addEventListener('click',()=>{
                 if(state.mode==='list')state.mode='single';
                 else if(state.mode==='single')state.mode='shuffle';
@@ -1920,8 +1981,12 @@
 
             document.addEventListener('mouseup',()=>{fullProgressDragging=false;});
             document.addEventListener('touchend',()=>{fullProgressDragging=false;});
+            let lastUpdate = 0;
             dom.audio.addEventListener('timeupdate', () => {
                 if (!state.playing) return;
+                const now = Date.now();
+                if (now - lastUpdate < 100) return; // 限制100ms更新一次
+                lastUpdate = now;
                 updateProgressBars();
                 updateTimeDisplay();
                 updateLyrics(dom.audio.currentTime || 0);
@@ -1946,11 +2011,13 @@
 
             function showLyrics() {
                 $('lyricsView').style.display = 'flex';
+                $('fullPlayerOpacitySlider').parentElement.style.display = 'none';
                 setTimeout(() => $('lyricsView').classList.add('show'), 10);
             }
 
             function hideLyrics() {
                 $('lyricsView').classList.remove('show');
+                $('fullPlayerOpacitySlider').parentElement.style.display = 'flex';
                 setTimeout(() => $('lyricsView').style.display = 'none', 300);
             }
 
@@ -2013,6 +2080,7 @@
                 hideLyrics();
                 $('volumePanel').style.display='none';
                 $('playlistView').style.display='none';
+                $('fullPlayerOpacitySlider').parentElement.style.display='flex';
             }
 
             // 键盘快捷键
@@ -2058,14 +2126,9 @@
             $('fullMuteBtn').innerHTML=state.muted?'<i data-lucide="volume-x"></i>':'<i data-lucide="volume-2"></i>';
             updateModeUI();
 
-            // 初始化图标一次 - 避免重复渲染
+            // 初始化图标一次
             if(typeof lucide !== 'undefined'){
-                setTimeout(() => {
-                    lucide.createIcons();
-                    document.querySelectorAll('i[data-lucide]').forEach(icon => {
-                        icon.setAttribute('data-rendered', 'true');
-                    });
-                }, 50);
+                lucide.createIcons();
             }
 
             loadDefault();
@@ -2078,7 +2141,9 @@
             fullBar: null,
             fullHandle: null,
             currentTime: null,
-            totalTime: null
+            totalTime: null,
+            progressWrapper: null,
+            fullProgressWrapper: null
         };
 
         // 分离的进度条更新函数
@@ -2091,15 +2156,15 @@
             if (progressElements.bar) {
                 progressElements.bar.style.transform = `scaleX(${r})`;
             }
-            if (progressElements.handle) {
-                const w = dom.progressWrapper.clientWidth;
+            if (progressElements.handle && progressElements.progressWrapper) {
+                const w = progressElements.progressWrapper.clientWidth;
                 progressElements.handle.style.transform = `translateY(-50%) translateX(${w * r - 6}px)`;
             }
             if (progressElements.fullBar) {
                 progressElements.fullBar.style.transform = `scaleX(${r})`;
             }
-            if (progressElements.fullHandle) {
-                const fw = dom.fullProgressWrapper.clientWidth;
+            if (progressElements.fullHandle && progressElements.fullProgressWrapper) {
+                const fw = progressElements.fullProgressWrapper.clientWidth;
                 progressElements.fullHandle.style.transform = `translateY(-50%) translateX(${fw * r - 8}px)`;
             }
         }
@@ -2117,7 +2182,7 @@
             }
         }
 
-        // 优化的图标渲染函数 - 避免频繁重渲染
+        // 优化的图标渲染函数 - 防止闪动
         let iconRenderTimeout;
         let isRenderingIcons = false;
         function renderIconsOptimized() {
@@ -2126,18 +2191,32 @@
             iconRenderTimeout = setTimeout(() => {
                 if (typeof lucide !== 'undefined' && !isRenderingIcons) {
                     isRenderingIcons = true;
-                    const newIcons = document.querySelectorAll('i[data-lucide]:not([data-rendered])');
-                    if (newIcons.length > 0) {
-                        lucide.createIcons();
-                        newIcons.forEach(icon => icon.setAttribute('data-rendered', 'true'));
-                    }
-                    isRenderingIcons = false;
+                    requestAnimationFrame(() => {
+                        try {
+                            // 只渲染新添加的图标，而不是全部重新渲染
+                            const newIcons = document.querySelectorAll('i[data-lucide]:not([data-rendered])');
+                            if (newIcons.length > 0) {
+                                lucide.createIcons();
+                                newIcons.forEach(icon => icon.setAttribute('data-rendered', 'true'));
+                            }
+                        } finally {
+                            isRenderingIcons = false;
+                        }
+                    });
                 }
-            }, 100); // 增加延迟，减少频繁调用
+            }, 32); // 降低频率减少闪动
         }
 
         document.addEventListener('DOMContentLoaded',()=>{
             setup();
+            // 初始化时一次性渲染所有图标
+            if(typeof lucide !== 'undefined'){
+                lucide.createIcons();
+                // 标记所有初始图标为已渲染
+                document.querySelectorAll('i[data-lucide]').forEach(icon => {
+                    icon.setAttribute('data-rendered', 'true');
+                });
+            }
         });
     })();
 </script>
