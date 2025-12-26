@@ -619,79 +619,7 @@
             font-size:14px;
         }
 
-        /* 音量控制面板 */
-        .volume-panel{
-            position:absolute;
-            inset:0;
-            background:var(--bg);
-            display:flex;
-            flex-direction:column;
-            z-index:103;
-            backdrop-filter:blur(20px);
-        }
-        .volume-panel.alt-style{background:linear-gradient(135deg, #1a1a1f 0%, #1e1e24 50%, #222228 100%);}
-        .volume-panel.alt-style-1{background:linear-gradient(135deg, #1f1a2e 0%, #1a2e2a 50%, #1e2e1f 100%);}
-        .volume-panel.alt-style-2{background:linear-gradient(135deg, #2a2a3a 0%, #2e2a3e 50%, #3a2a3e 100%);}
-        .volume-panel.alt-style-3{background:linear-gradient(135deg, #1a2a3a 0%, #1a2e3a 50%, #1e3a2a 100%);}
-        .volume-panel.alt-style-4{background:linear-gradient(135deg, #3a2a2e 0%, #3e2e1a 50%, #3a2e2a 100%);}
-        .volume-panel.alt-style-5{background:linear-gradient(135deg, #2a3a3a 0%, #2e3a3e 50%, #3a3e3a 100%);}
-        .volume-header{
-            display:flex;
-            align-items:center;
-            justify-content:space-between;
-            padding:12px 20px;
-            height:56px;
-        }
-        .volume-title{
-            font-size:16px;
-            font-weight:600;
-        }
-        .volume-content{
-            flex:1;
-            display:flex;
-            flex-direction:column;
-            align-items:center;
-            justify-content:center;
-            padding:40px;
-        }
-        .volume-display{
-            font-size:48px;
-            font-weight:700;
-            color:var(--accent);
-            margin-bottom:40px;
-        }
-        .volume-slider-full{
-            width:80%;
-            height:6px;
-            background:rgba(255,255,255,.2);
-            border-radius:3px;
-            outline:none;
-            -webkit-appearance:none;
-            margin-bottom:40px;
-        }
-        .volume-slider-full::-webkit-slider-thumb{
-            width:24px;
-            height:24px;
-            background:var(--accent);
-            border-radius:50%;
-            -webkit-appearance:none;
-            cursor:pointer;
-            box-shadow:0 2px 8px rgba(255,205,50,.4);
-        }
-        .volume-buttons{
-            display:flex;
-            gap:12px;
-            flex-wrap:wrap;
-            justify-content:center;
-        }
-        .volume-btn,.volume-preset{
-            padding:8px 16px;
-            border:1px solid var(--border);
-            border-radius:20px;
-            background:rgba(255,255,255,.1);
-            color:var(--text-main);
-            font-size:14px;
-        }
+
 
         /* PC端歌曲信息 */
         .pc-song-info {
@@ -932,27 +860,7 @@
         <button id="lyricsPlayBtn" class="lyrics-play-btn"><i data-lucide="play"></i></button>
     </div>
 
-    <!-- 音量控制面板 -->
-    <div id="volumePanel" class="volume-panel" style="display:none;">
-        <div class="volume-header">
-            <button id="volumeBackBtn" class="close-btn"><i data-lucide="arrow-left"></i></button>
-            <div class="volume-title">音量控制</div>
-            <div style="width:40px;"></div>
-        </div>
-        <div class="volume-content">
-            <div class="volume-display">
-                <span id="volumeValue">70</span>%
-            </div>
-            <input id="volumeSlider" class="volume-slider-full" type="range" min="0" max="1" step="0.01" value="0.7">
-            <div class="volume-buttons">
-                <button id="muteBtn" class="volume-btn"><i data-lucide="volume-2"></i></button>
-                <button class="volume-preset" data-volume="0.3">30%</button>
-                <button class="volume-preset" data-volume="0.5">50%</button>
-                <button class="volume-preset" data-volume="0.7">70%</button>
-                <button class="volume-preset" data-volume="1.0">100%</button>
-            </div>
-        </div>
-    </div>
+
 
     <!-- 播放列表视图 -->
     <div id="playlistView" class="playlist-view" style="display:none;">
@@ -1461,10 +1369,7 @@
                 }
             }
         }
-        function updateVolumeDisplay(){
-            const vol=Math.round(dom.audio.volume*100);
-            $('volumeValue').textContent=vol;
-        }
+
 
         function toggleFav(){if(!state.current)return;const idx=state.favorites.findIndex(t=>t.uid===state.current.uid);if(idx>=0){state.favorites.splice(idx,1);toast('已取消收藏');}else{state.favorites.push(state.current);toast('已收藏');}saveData();updateUI();renderList();}
         function nextTrack(dir){const tab=document.querySelector('.tab.active').dataset.tab;let list=[];if(tab==='results')list=state.results;else if(tab==='favorites')list=state.favorites;else if(tab==='playlists')list=state.history;if(!list.length)return;let idx=list.findIndex(t=>t.uid===state.current.uid);if(idx<0)idx=0;if(state.mode==='single'){$('audio').currentTime=0;$('audio').play();return;}if(state.mode==='shuffle'){if(list.length===1)idx=0;else{let n;do{n=Math.floor(Math.random()*list.length);}while(n===idx);idx=n;}}else{idx=(idx+(dir==='prev'?-1:1)+list.length)%list.length;}playTrack(list[idx]);}
@@ -1572,7 +1477,7 @@
             dom.searchInput.addEventListener('blur',()=>{setTimeout(()=>$('searchHistory').classList.remove('show'),200);});
             $('disclaimerOpenBtn').addEventListener('click',()=>{$('disclaimerModal').style.display='flex';});
             $('disclaimerBtn').addEventListener('click',()=>{
-                const elements = [$('app'), document.body, $('fullPlayerPanel'), $('playlistView'), $('lyricsView'), $('volumePanel')];
+                const elements = [$('app'), document.body, $('fullPlayerPanel'), $('playlistView'), $('lyricsView')];
                 const styles = ['', 'alt-style', 'alt-style-1', 'alt-style-2', 'alt-style-3', 'alt-style-4', 'alt-style-5'];
                 const names = ['默认风格', 'Spotify风格', 'Apple Music风格', 'YouTube Music风格', 'Tidal风格', '网易云风格', 'QQ音乐风格'];
                 styles.forEach(style => {if(style) elements.forEach(el => el?.classList.remove(style));});
@@ -1691,8 +1596,7 @@
             $('lyricsView').addEventListener('mouseleave', () => {
                 lyricsIsDragging = false;
             });
-            $('volumeBackBtn').addEventListener('click',()=>{$('volumePanel').style.display='none';});
-            document.querySelectorAll('.volume-preset').forEach(btn=>btn.addEventListener('click',()=>{const vol=parseFloat(btn.dataset.volume);dom.audio.volume=vol;state.volume=vol;saveData();}));
+
             // 歌词跳转按钮
             $('jumpPrev').addEventListener('click',()=>{
                 if(state.lyricIndex>0){
@@ -1840,8 +1744,8 @@
                 if(e.code==='Space'&&!typing){e.preventDefault();if(dom.playPauseBtn)dom.playPauseBtn.click();}
                 if(e.key==='ArrowRight'&&!typing){dom.audio.currentTime=(dom.audio.currentTime||0)+5;}
                 if(e.key==='ArrowLeft'&&!typing){dom.audio.currentTime=Math.max(0,(dom.audio.currentTime||0)-5);}
-                if(e.key==='ArrowUp'&&!typing){dom.audio.volume=Math.min(1,(dom.audio.volume||0)+0.05);if($('volumeSlider'))$('volumeSlider').value=dom.audio.volume;updateVolumeDisplay();}
-                if(e.key==='ArrowDown'&&!typing){dom.audio.volume=Math.max(0,(dom.audio.volume||0)-0.05);if($('volumeSlider'))$('volumeSlider').value=dom.audio.volume;updateVolumeDisplay();}
+                if(e.key==='ArrowUp'&&!typing){dom.audio.volume=Math.min(1,(dom.audio.volume||0)+0.05);}
+                if(e.key==='ArrowDown'&&!typing){dom.audio.volume=Math.max(0,(dom.audio.volume||0)-0.05);}
                 if((e.key==='n'||e.key==='N')&&!typing)nextTrack('next');
                 if((e.key==='p'||e.key==='P')&&!typing)nextTrack('prev');
                 if((e.key==='f'||e.key==='F')&&!typing)toggleFav();
@@ -1877,7 +1781,7 @@
             updateModeUI();
             
             // 恢复风格设置
-            const elements = [$('app'), document.body, $('fullPlayerPanel'), $('playlistView'), $('lyricsView'), $('volumePanel')];
+            const elements = [$('app'), document.body, $('fullPlayerPanel'), $('playlistView'), $('lyricsView')];
             const styles = ['', 'alt-style', 'alt-style-1', 'alt-style-2', 'alt-style-3', 'alt-style-4', 'alt-style-5'];
             if(styles[state.appStyle]) {
                 elements.forEach(el => el?.classList.add(styles[state.appStyle]));
