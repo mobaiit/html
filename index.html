@@ -1737,6 +1737,8 @@
             progressElements.fullHandle = dom.fullProgressHandle;
             progressElements.currentTime = $('currentTime');
             progressElements.totalTime = $('totalTime');
+            progressElements.progressWrapper = dom.progressWrapper;
+            progressElements.fullProgressWrapper = dom.fullProgressWrapper;
 
             // 搜索功能
             function performSearch(){
@@ -1961,8 +1963,12 @@
 
             document.addEventListener('mouseup',()=>{fullProgressDragging=false;});
             document.addEventListener('touchend',()=>{fullProgressDragging=false;});
+            let lastUpdate = 0;
             dom.audio.addEventListener('timeupdate', () => {
                 if (!state.playing) return;
+                const now = Date.now();
+                if (now - lastUpdate < 100) return; // 限制100ms更新一次
+                lastUpdate = now;
                 updateProgressBars();
                 updateTimeDisplay();
                 updateLyrics(dom.audio.currentTime || 0);
@@ -2117,7 +2123,9 @@
             fullBar: null,
             fullHandle: null,
             currentTime: null,
-            totalTime: null
+            totalTime: null,
+            progressWrapper: null,
+            fullProgressWrapper: null
         };
 
         // 分离的进度条更新函数
@@ -2130,15 +2138,15 @@
             if (progressElements.bar) {
                 progressElements.bar.style.transform = `scaleX(${r})`;
             }
-            if (progressElements.handle) {
-                const w = dom.progressWrapper.clientWidth;
+            if (progressElements.handle && progressElements.progressWrapper) {
+                const w = progressElements.progressWrapper.clientWidth;
                 progressElements.handle.style.transform = `translateY(-50%) translateX(${w * r - 6}px)`;
             }
             if (progressElements.fullBar) {
                 progressElements.fullBar.style.transform = `scaleX(${r})`;
             }
-            if (progressElements.fullHandle) {
-                const fw = dom.fullProgressWrapper.clientWidth;
+            if (progressElements.fullHandle && progressElements.fullProgressWrapper) {
+                const fw = progressElements.fullProgressWrapper.clientWidth;
                 progressElements.fullHandle.style.transform = `translateY(-50%) translateX(${fw * r - 8}px)`;
             }
         }
