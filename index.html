@@ -1493,13 +1493,13 @@
             $('qualitySelect').addEventListener('change',()=>{state.quality=$('qualitySelect').value;saveData();toast(`音质已切换至${state.quality==='lossless'?'无损':state.quality==='high'?'高品质':'标准'}`);if(state.keyword){searchAll(true);}else{loadDefault();}});
             document.querySelectorAll('.tab').forEach(tab=>tab.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t===tab));renderList();requestAnimationFrame(()=>renderIconsOptimized());}));
 
-            dom.playPauseBtn.addEventListener('click',async(e)=>{if(!state.current)return;if(state.playing&&!dom.audio.paused){dom.audio.pause();state.playing=false;updateUI();}else{e.target.innerHTML='<i data-lucide="loader-2" class="animate-spin"></i>';setTimeout(()=>lucide.createIcons(),10);await playTrack(state.current,e.target);}});
+            dom.playPauseBtn.addEventListener('click',async(e)=>{if(!state.current)return;if(state.current.url){if(dom.audio.paused){dom.audio.play();state.playing=true;}else{dom.audio.pause();state.playing=false;}updateUI();}else{await playTrack(state.current,e.target);}});
             dom.nextBtn.addEventListener('click',()=>nextTrack('next'));
             dom.favBtn.addEventListener('click',toggleFav);
             dom.menuBtn.addEventListener('click',()=>{dom.fullPlayerMask.classList.add('show');dom.fullPlayerPanel.classList.add('show');});
 
             // 全屏播放器事件
-            dom.fullPlayBtn.addEventListener('click',async(e)=>{if(!state.current)return;if(state.playing&&!dom.audio.paused){dom.audio.pause();state.playing=false;updateUI();}else{e.target.innerHTML='<i data-lucide="loader-2" class="animate-spin"></i>';setTimeout(()=>lucide.createIcons(),10);await playTrack(state.current,e.target);}});
+            dom.fullPlayBtn.addEventListener('click',async(e)=>{if(!state.current)return;if(state.current.url){if(dom.audio.paused){dom.audio.play();state.playing=true;}else{dom.audio.pause();state.playing=false;}updateUI();}else{await playTrack(state.current,e.target);}});
             dom.fullPrevBtn.addEventListener('click',()=>nextTrack('prev'));
             dom.fullNextBtn.addEventListener('click',()=>nextTrack('next'));
             dom.fullFavBtn.addEventListener('click',toggleFav);
@@ -1714,15 +1714,18 @@
             // 歌词界面播放按钮
             $('lyricsPlayBtn').addEventListener('click', async(e) => {
                 if (!state.current) return;
-                if(state.playing && !dom.audio.paused){
-                    dom.audio.pause();
-                    state.playing = false;
+                if(state.current.url){
+                    if (dom.audio.paused) {
+                        dom.audio.play();
+                        state.playing = true;
+                    } else {
+                        dom.audio.pause();
+                        state.playing = false;
+                    }
                     updateUI();
-                    $('lyricsPlayBtn').innerHTML = '<i data-lucide="play"></i>';
+                    $('lyricsPlayBtn').innerHTML = state.playing ? '<i data-lucide="pause"></i>' : '<i data-lucide="play"></i>';
                     renderIconsOptimized();
                 }else{
-                    e.target.innerHTML = '<i data-lucide="loader-2" class="animate-spin"></i>';
-                    setTimeout(()=>lucide.createIcons(),10);
                     await playTrack(state.current,e.target);
                 }
             });
