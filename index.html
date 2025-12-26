@@ -527,6 +527,7 @@
             z-index:103;
             transform:translateX(100%);
             transition:transform .3s cubic-bezier(.4,0,.2,1);
+            backdrop-filter:blur(20px);
         }
         .lyrics-view.show{
             transform:translateX(0);
@@ -1374,8 +1375,8 @@
                 renderLyrics();
                 renderInlineLyrics();
             } catch(e) {
-                toast('播放失败');
-                updateUI();
+                toast('播放失败，自动切换下一首');
+                nextTrack('next');
             }
         }
         function showFirstTrack(){
@@ -1912,7 +1913,7 @@
                 updateTimeDisplay();
                 updateLyrics(dom.audio.currentTime || 0);
             });
-            dom.audio.addEventListener('ended',()=>nextTrack('next'));dom.audio.addEventListener('play',()=>{state.playing=true;updateUI();if(dom.fullCover)dom.fullCover.classList.remove('paused');});dom.audio.addEventListener('pause',()=>{state.playing=false;updateUI();if(dom.fullCover)dom.fullCover.classList.add('paused');});
+            dom.audio.addEventListener('ended',()=>nextTrack('next'));dom.audio.addEventListener('play',()=>{state.playing=true;updateUI();if(dom.fullCover)dom.fullCover.classList.remove('paused');});dom.audio.addEventListener('pause',()=>{state.playing=false;updateUI();if(dom.fullCover)dom.fullCover.classList.add('paused');});dom.audio.addEventListener('error',()=>{toast('播放失败，自动切换下一首');nextTrack('next');});
 
             document.querySelectorAll('.controls button').forEach(btn=>btn.addEventListener('click',e=>e.stopPropagation()));
             document.querySelector('.cover-wrapper').addEventListener('click',e=>e.stopPropagation());
