@@ -1,49 +1,36 @@
-<p align="center">
-  <img src="docs/logo.png" alt="logo" width="640">
-</p>
+# 墨白音乐盒 🎵
 
-<p align="center">
-  <strong>test</strong>
-</p>
-
-# 🌟 Overview
-
-MusicSquare is a simple music search, download, and play website. 
-It provides a lightweight, browser-friendly interface to search, play, and download music directly from your GitHub Pages site.
-
-This GitHub Pages deployment is available at:
+现代化在线音乐播放器，支持多平台音乐搜索与播放。
 
 👉 **Live URL:** <https://mobaiit.github.io/musicsquare/>
 
+## ✨ 主要功能
 
-## ✨ Key Features
+- **多平台支持**: 咪咕、网易云、QQ音乐、酷我
+- **响应式设计**: 适配手机、平板、桌面端
+- **实时歌词**: LRC格式歌词同步显示
+- **多主题**: 内置6种精美主题风格
+- **键盘快捷键**: 空格播放、方向键控制等
+- **收藏管理**: 收藏歌曲、播放历史
 
-- 🎵 **Online music search & playback**  
-  Supports searching songs by keyword and playing them directly in the browser.
+## 🚀 技术特点
 
-- 📻 **Multiple music sources**  
-  Integrates online platforms such as Migu, Netease, Kuwo and QQ.
+- 纯前端实现 (HTML5/CSS3/JavaScript)
+- 毛玻璃效果和流畅动画
+- 性能优化，移动端友好
+- 仅依赖 Lucide 图标库
 
-- 💛 **Cute & simple UI**  
-  A clean, playful interface themed around Pikachu and casual music listening.
+## 🔧 快速开始
 
+1. 在搜索框输入歌曲名或歌手名
+2. 选择音乐平台和音质
+3. 点击播放按钮开始播放
+4. 点击底部播放器进入全屏模式
 
-## 🚀 How to Use
+## ⚠️ 免责声明
 
-1. Open the live site:  
-   👉 <https://charlespikachu.github.io/musicsquare/>
+仅供学习演示，音乐版权归各平台及原作者所有。
 
-2. Use the search box to input an artist name or song title (e.g., “周杰伦”).
-
-3. Click on a result to start playback and enjoy the music.
-
-
-## 💻 Development & Customization
-
-- This site is hosted via **GitHub Pages**.
-- You can customize:
-  - Theme (colors, background, icons)
-  - API endpoints (e.g., your own proxy/bridge server for Migu, Netease, Kuwo and QQ.)
-  - Player behavior (autoplay, playlist, lyrics panel, etc.)
-
-For more details, check the source files in this repository and adjust the HTML / CSS / JavaScript as needed.
+## 👨💻 开发者
+**AI** - Claude Sonnet4.5
+**墨白** - QQ: 37010871
