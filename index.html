@@ -781,19 +781,26 @@
             position: absolute;
         }
 
-        /* 优化动画 - 只使用 transform 和 opacity 避免重排重绘 */
-        .track, .tab, .player .controls button {
-            transition: transform 0.15s ease, opacity 0.15s ease;
+        /* 按钮点击效果 */
+        button, .disclaimer-btn, .search-history-btn, .batch-btn {
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            cursor: pointer;
         }
         
-        .track:hover {
-            transform: translateX(2px);
-        }
-        
-        .player .controls button:active,
-        .control-btn:active,
-        .action-btn:active {
+        button:active, .disclaimer-btn:active, .search-history-btn:active, .batch-btn:active {
             transform: scale(0.95);
+        }
+        
+        .track .playbtn:active {
+            transform: scale(0.9);
+        }
+        
+        .tab {
+            transition: transform 0.15s ease;
+        }
+        
+        .tab:active {
+            transform: scale(0.98);
         }
         
         .full-player-panel {
