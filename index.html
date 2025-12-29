@@ -1053,6 +1053,7 @@
         // 防止无限递归的播放失败计数器
         let playFailCount = 0;
         const MAX_PLAY_FAIL_COUNT = 3;
+        let isPlaying = false; // 播放锁，防止并发调用
 
         // 本地存储
         function saveData(){localStorage.setItem('musicbox',JSON.stringify({favorites:state.favorites,history:state.history,searchHistory:state.searchHistory,enabledSources:state.enabledSources,mode:state.mode,volume:state.volume,quality:state.quality,perLimit:state.perLimit,appStyle:state.appStyle}));}
@@ -1285,6 +1286,13 @@
             });
         }
         async function playTrack(track, clickedBtn){
+            // 防止并发调用
+            if(isPlaying) {
+                console.log('播放正在进行中，忽略请求');
+                return;
+            }
+            isPlaying = true;
+
             // 显示加载状态
             if(clickedBtn) {
                 clickedBtn.innerHTML = '<i data-lucide="loader-2" class="animate-spin"></i>';
@@ -1298,6 +1306,7 @@
                     clickedBtn.innerHTML = '<i data-lucide="play"></i>';
                     setTimeout(()=>lucide.createIcons(),10);
                 }
+                isPlaying = false;
                 return;
             }
 
@@ -1318,9 +1327,10 @@
                         setTimeout(()=>lucide.createIcons(),10);
                     }
                     updateUI();
+                    isPlaying = false;
                     // 防止无限递归
                     if(playFailCount < MAX_PLAY_FAIL_COUNT) {
-                        setTimeout(() => nextTrack('next'), 1000);
+                        setTimeout(() => nextTrack('next'), 3000);
                     } else {
                         toast('连续播放失败，请手动选择歌曲');
                         playFailCount = 0;
@@ -1338,6 +1348,7 @@
                 await $('audio').play();
                 state.playing=true;
                 playFailCount = 0; // 播放成功，重置失败计数
+                isPlaying = false; // 释放锁
                 updateUI();
 
                 state.lyrics=track.lrc?parseLRC(track.lrc):[];
@@ -1352,9 +1363,10 @@
                     setTimeout(()=>lucide.createIcons(),10);
                 }
                 updateUI();
+                isPlaying = false; // 释放锁
                 // 防止无限递归
                 if(playFailCount < MAX_PLAY_FAIL_COUNT) {
-                    setTimeout(() => nextTrack('next'), 1000);
+                    setTimeout(() => nextTrack('next'), 3000);
                 } else {
                     toast('连续播放失败，请手动选择歌曲');
                     playFailCount = 0;
@@ -1600,6 +1612,12 @@
 
         function toggleFav(){if(!state.current)return;const idx=state.favorites.findIndex(t=>t.uid===state.current.uid);if(idx>=0){state.favorites.splice(idx,1);toast('已取消收藏');}else{state.favorites.push(state.current);toast('已收藏');}saveData();updateUI();renderList();}
         function nextTrack(dir){
+            // 防止并发调用
+            if(isPlaying) {
+                console.log('nextTrack: 播放正在进行中，忽略请求');
+                return;
+            }
+
             const tab=document.querySelector('.tab.active').dataset.tab;
             let list=[];
             if(tab==='results')list=state.results;
@@ -1960,7 +1978,11 @@
             });
             dom.audio.addEventListener('ended',()=>{
                 // 延迟执行避免快速连续调用
-                setTimeout(() => nextTrack('next'), 100);
+                setTimeout(() => {
+                    if(!isPlaying) {
+                        nextTrack('next');
+                    }
+                }, 100);
             });
             dom.audio.addEventListener('play',()=>{
                 state.playing=true;
@@ -1977,14 +1999,16 @@
                 toast('音频播放出错');
                 state.playing = false;
                 updateUI();
+                playFailCount++; // 增加失败计数
                 // 延迟执行并限制错误处理频率
                 setTimeout(() => {
-                    if(playFailCount < MAX_PLAY_FAIL_COUNT) {
+                    if(!isPlaying && playFailCount < MAX_PLAY_FAIL_COUNT) {
                         nextTrack('next');
-                    } else {
+                    } else if(playFailCount >= MAX_PLAY_FAIL_COUNT) {
                         toast('音频连续出错，请检查网络或手动选择歌曲');
+                        playFailCount = 0; // 重置计数器
                     }
-                }, 1000);
+                }, 3000);
             });
 
             document.querySelectorAll('.controls button').forEach(btn=>btn.addEventListener('click',e=>e.stopPropagation()));
