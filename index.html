@@ -1635,21 +1635,21 @@
             let fullPlayerIsDragging = false;
             
             dom.fullPlayerPanel.addEventListener('touchstart', e => {
+                if (e.target.closest('.full-player-controls') || e.target.closest('.full-progress')) return;
                 fullPlayerStartY = e.touches[0].clientY;
                 fullPlayerIsDragging = true;
             });
             
             dom.fullPlayerPanel.addEventListener('touchmove', e => {
                 if (!fullPlayerIsDragging) return;
+                if (e.target.closest('.full-player-controls') || e.target.closest('.full-progress')) return;
                 const currentY = e.touches[0].clientY;
                 const diff = currentY - fullPlayerStartY;
                 if (diff > 0) {
                     e.preventDefault();
                     const progress = Math.min(diff / 200, 1);
-                    requestAnimationFrame(() => {
-                        dom.fullPlayerPanel.style.transform = `translateY(${diff}px)`;
-                        dom.fullPlayerMask.style.opacity = 1 - progress * 0.5;
-                    });
+                    dom.fullPlayerPanel.style.transform = `translateY(${diff}px)`;
+                    dom.fullPlayerMask.style.opacity = 1 - progress * 0.5;
                 }
             });
             
@@ -1660,10 +1660,8 @@
                 if (diff > 100) {
                     closeFullPlayer();
                 } else {
-                    requestAnimationFrame(() => {
-                        dom.fullPlayerPanel.style.transform = 'translateY(0)';
-                        dom.fullPlayerMask.style.opacity = '1';
-                    });
+                    dom.fullPlayerPanel.style.transform = 'translateY(0)';
+                    dom.fullPlayerMask.style.opacity = '1';
                 }
                 fullPlayerIsDragging = false;
             });
